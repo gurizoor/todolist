@@ -1,0 +1,48 @@
+body{
+    background-color: rgb(205,205,205);
+}
+
+h1, h2, label{
+    color: rgb(10,10,10);
+}
+
+.tbg{
+    background-color:rgb(225,225,225);
+    border: 5px outset rgb(20,20,20);
+}
+
+#inp{
+    width:75%;
+    font-size: 25px;
+    border: none;
+}
+
+#add{
+    width: 20%;
+    font-size: 100%;
+    background-color:rgb(255,255,255);
+    border: none;
+}
+
+#add:hover{
+    background-color: rgb(200,200,200);
+}
+
+#add:active{
+    background-color: rgb(170,170,170);
+}
+
+#daylist, #weeklist, #monthlist{
+    display: grid;
+    border: 5px outset rgb(50, 50, 50);
+}
+
+.dlist{
+    display: block;
+    width: 25%;
+}
+
+.tlist{
+    display:block;
+    font-size: 200%;
+}

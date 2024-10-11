@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日課管理ツール</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="tbg">
+        <h1>To Do List</h1>
+    </div>
+    <div class="tbg">
+        <input type="text" name="inp" id="inp">
+        <button type="button" id="add">追加</button>
+    </div>
+    <div class="tbg">
+        <div id="daylist">
+            <div class="tlist">
+                <input type="radio" name="dwm" id="day" checked>
+                <label for="day">Day</label>
+            </div>
+            <!--day-->
+            <!--<div class="dlist"><input type="checkbox" name="" id="ch"><label for="ch">test</label></div>-->
+        </div>
+        <div id="weeklist">
+            <div class="tlist">
+                <input type="radio" name="dwm" id="week">
+                <label for="week">Week</label>
+            </div>
+            <!--week-->
+        </div>
+        <div id="monthlist">
+            <div class="tlist">
+                
+                <input type="radio" name="dwm" id="month">
+                <label for="month">Month</label>
+            </div>
+            <!--month-->
+        </div>
+    </div>
+    <!--<button type="button" id="devb">dev</button>-->
+    <script src="script.js"></script>
+</body>
+</html>
