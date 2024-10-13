@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日課管理ツール</title>
+    <title>Daily routine management tool</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="tbg">
         <h1>To Do List</h1>
     </div>
     <div class="tbg">
-        <input type="text" name="inp" id="inp">
-        <button type="button" id="add">追加</button>
+        <input type="text" name="inp" id="inp" placeholder="Enter the items you want to add">
+        <button type="button" id="add">Add to list</button>
     </div>
     <div class="tbg">
         <div id="daylist">
@@ -32,14 +34,16 @@
         </div>
         <div id="monthlist">
             <div class="tlist">
-                
+
                 <input type="radio" name="dwm" id="month">
                 <label for="month">Month</label>
             </div>
             <!--month-->
         </div>
     </div>
+    <a>ver1.1.0</a>
     <!--<button type="button" id="devb">dev</button>-->
     <script src="script.js"></script>
 </body>
+
 </html>

@@ -1,48 +1,87 @@
-body{
-    background-color: rgb(205,205,205);
+body {
+    background-color: rgb(205, 205, 205);
 }
 
-h1, h2, label{
-    color: rgb(10,10,10);
+h1 {
+    color: rgb(10, 10, 10);
+    margin: 10px;
 }
 
-.tbg{
-    background-color:rgb(225,225,225);
-    border: 5px outset rgb(20,20,20);
+h2,
+label {
+    color: rgb(10, 10, 10);
 }
 
-#inp{
-    width:75%;
+.tbg {
+    background-color: rgb(240, 240, 240);
+    border-radius: 10px;
+    border: 1px solid;
+    margin: 3px;
+}
+
+#inp {
+    width: 75%;
     font-size: 25px;
+    border-radius: 10px;
     border: none;
+    margin: 5px;
 }
 
-#add{
+#add {
     width: 20%;
-    font-size: 100%;
-    background-color:rgb(255,255,255);
+    font-size: 150%;
+    background-color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 10px;
+}
+
+#add:hover {
+    background-color: rgb(200, 200, 200);
+}
+
+#add:active {
+    background-color: rgb(170, 170, 170);
+}
+
+#daylist,
+#weeklist,
+#monthlist {
+    display: grid;
+    border: 1px solid;
+    border-radius: 10px;
+    background-color: rgb(240, 240, 240);
+    margin: 4px;
+}
+
+.dlist {
+    display: block;
+    width: 100%;
+}
+
+.ilist {
     border: none;
 }
 
-#add:hover{
-    background-color: rgb(200,200,200);
+.blist {
+    border: none;
+    border-radius: 6px;
+    background-color: rgb(210, 210, 210);
 }
 
-#add:active{
-    background-color: rgb(170,170,170);
+.blist:hover {
+    background-color: rgb(140, 140, 140);
 }
 
-#daylist, #weeklist, #monthlist{
-    display: grid;
-    border: 5px outset rgb(50, 50, 50);
+.blist:active {
+    background-color: rgb(100, 100, 100);
 }
 
-.dlist{
+.llist {
+    border: none;
+    font-size: 16px;
+}
+
+.tlist {
     display: block;
-    width: 25%;
-}
-
-.tlist{
-    display:block;
     font-size: 200%;
 }

@@ -26,19 +26,32 @@ let todayObj: { date: number, day: number, month: number, year: number } = {
 let preDate = todayObj;
 function checkDWM() {
     //日付が変わったら(preDateがtodayじゃない場合)チェックを外す
-    if (todayObj.date !== preDate.date || todayObj.month !== preDate.month || todayObj.year !== preDate.year) {
+    if (
+        (todayObj.date !== preDate.date) || 
+        (todayObj.month !== preDate.month) || 
+        (todayObj.year !== preDate.year)
+    ) {
         listArray.map(list => {
             if (list.dwmId == "daylist") list.i.checked = false;
         });
     }
     //月曜を跨いだらチェックを外す
-    if (preDate.day === 6 && todayObj.day === 0 || todayObj.day < preDate.day || todayObj.date >= preDate.date + 7 || todayObj.month !== preDate.month || todayObj.year !== preDate.year) {
+    if (
+        (preDate.day === 0 && todayObj.day === 1) ||
+        (todayObj.day < preDate.day) ||
+        (todayObj.date >= preDate.date + 7) ||
+        (todayObj.month !== preDate.month) ||
+        (todayObj.year !== preDate.year)
+    ) {
         listArray.map(list => {
             if (list.dwmId == "weeklist") list.i.checked = false;
         });
     }
     //月が変わったらチェックを外す
-    if (todayObj.month !== preDate.month || todayObj.year !== preDate.year) {
+    if (
+        (todayObj.month !== preDate.month) || 
+        (todayObj.year !== preDate.year)
+    ) {
         listArray.map(list => {
             if (list.dwmId == "monthlist") list.i.checked = false;
         });
@@ -75,6 +88,7 @@ function dataLoad(): lists[] {
     
 }
 
+
 //
 //===リストクラスはじめ===
 //
@@ -103,14 +117,17 @@ class lists {
         this.i.type = "checkbox";
         this.i.id = "ch" + this.num;
         this.i.checked = prechecked;
+        this.i.className = "ilist"
 
         this.l.innerHTML = showtext + " ";//inp.value+" ";
         this.l.htmlFor = "ch" + this.num;
+        this.l.className = "llist"
 
         this.d.className = "dlist";
 
         this.b.type = "button";
         this.b.textContent = "x";
+        this.b.className = "blist"
 
         lsid += 1;
 
