@@ -4,9 +4,11 @@ let add = <HTMLButtonElement>document.getElementById("add");
 let daylist = <HTMLDivElement>document.getElementById("daylist");
 let weeklist = <HTMLDivElement>document.getElementById("weeklist");
 let monthlist = <HTMLDivElement>document.getElementById("monthlist");
+let generallist = <HTMLDivElement>document.getElementById("generallist");
 let day = <HTMLInputElement>document.getElementById("day");
 let week = <HTMLInputElement>document.getElementById("week");
 let month = <HTMLInputElement>document.getElementById("month");
+let general = <HTMLInputElement>document.getElementById("general");
 
 let lsid: number = 0;
 let listArray: lists[] = [];
@@ -27,8 +29,8 @@ let preDate = todayObj;
 function checkDWM() {
     //日付が変わったら(preDateがtodayじゃない場合)チェックを外す
     if (
-        (todayObj.date !== preDate.date) || 
-        (todayObj.month !== preDate.month) || 
+        (todayObj.date !== preDate.date) ||
+        (todayObj.month !== preDate.month) ||
         (todayObj.year !== preDate.year)
     ) {
         listArray.map(list => {
@@ -49,7 +51,7 @@ function checkDWM() {
     }
     //月が変わったらチェックを外す
     if (
-        (todayObj.month !== preDate.month) || 
+        (todayObj.month !== preDate.month) ||
         (todayObj.year !== preDate.year)
     ) {
         listArray.map(list => {
@@ -59,33 +61,88 @@ function checkDWM() {
 }
 
 // 
-//===ローカルストレージ===
+//===indexeddb===
 // 
 
-function dataSet() {
-    let dataToSet = listArray.map(list => ({
-        dwmId: list.dwmId,
-        l: list.l.innerHTML,
-        i: list.i.checked
-    }))
-    localStorage.setItem("listArray", JSON.stringify(dataToSet));
-    localStorage.setItem("preDate", JSON.stringify(todayObj));
-    //console.log("dataSet")
+let db: IDBDatabase;
+const dbName: string = "listArrayDB";
+const storeName: string = "listStore";
+
+function openDatabase(): Promise<IDBDatabase> {
+    return new Promise((resolve, reject) => {
+        const request: IDBOpenDBRequest = indexedDB.open(dbName, 1);
+
+        request.onupgradeneeded = (event) => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains(storeName)) {
+                // キーパスを設定してオブジェクトストアを作成
+                db.createObjectStore(storeName, { keyPath: "id" });
+            }
+        };
+
+        request.onsuccess = (event) => {
+            db = request.result;
+            resolve(db);
+        };
+
+        request.onerror = (event) => {
+            console.error("IndexedDBのオープンエラー", event);
+            reject(event);
+        };
+    });
 }
 
-function dataLoad(): lists[] {
-    //console.log("dataLoad")
-    let defaultPreDate = { date: today.getDate(), day: today.getDay(), month: today.getMonth(), year: today.getFullYear() };
-    preDate = JSON.parse(localStorage.getItem("preDate") || JSON.stringify(defaultPreDate));
 
-    let retrievedData = JSON.parse(localStorage.getItem("listArray") || "[]");
-    return retrievedData.map((data: any) => {
-        let listElement = document.getElementById(data.dwmId) as HTMLDivElement;
-        if (listElement) {
-            return new lists(listElement, data.l, data.i);
+async function idataSet(): Promise<void> {
+    const db = await openDatabase();
+    const transaction: IDBTransaction = db.transaction(storeName, "readwrite");
+    const store: IDBObjectStore = transaction.objectStore(storeName);
+
+    // 保存するデータ
+    const data = {
+        id: "listAndDate",   // 固定キーでデータを保存
+        listArray: lists.objArr(),
+        preDate: todayObj
+    };
+
+    // データを保存
+    const request: IDBRequest = store.put(data);
+    request.onsuccess = () => {
+        //console.log("データがIndexedDBに保存されました");
+    };
+
+    request.onerror = (e) => {
+        console.error("データ保存に失敗しました", e);
+    };
+}
+
+
+async function idataLoad(): Promise<void> {
+    const db = await openDatabase();
+    const transaction: IDBTransaction = db.transaction(storeName, "readonly");
+    const store: IDBObjectStore = transaction.objectStore(storeName);
+
+    const request: IDBRequest<any> = store.get("listAndDate");
+    request.onsuccess = () => {
+        if (request.result) {
+            const { listArray: storedListArray, preDate: storedPreDate } = request.result;
+
+            // listArrayとpreDateを復元
+            lists.objToList(storedListArray);
+            preDate = storedPreDate;
+            //console.log("データが読み込まれました", storedListArray, storedPreDate);
+
+            // 読み込んだリストを表示
+            lists.show();
+            checkDWM();
+        } else {
+            console.log("IndexedDBに保存されたデータがありません");
         }
-    }).filter((item: any) => item !== null);
-    
+    };
+
+    request.onerror = (e) => {
+        console.error("データ読み込みに失敗しました", e);
+    };
 }
 
 
@@ -160,6 +217,31 @@ class lists {
             //console.log(i);
         }
     }
+
+    public static objArr(): {
+        dwmId: string;
+        l: string;
+        i: boolean;
+    }[] {
+        return listArray.map(list => (
+            {
+                dwmId: list.dwmId,
+                l: list.l.innerHTML,
+                i: list.i.checked
+
+            }
+        ))
+    }
+    public static objToList(listobj: {
+        dwmId: string,
+        l: string,
+        i: boolean
+    }[]) {
+        listArray = listobj.map(list => {
+            let listelement = document.getElementById(list.dwmId) as HTMLDivElement;
+            return new lists(listelement, list.l, list.i);
+        }).filter((item: any):item is lists => item !== null);
+    }
 }
 //
 //===リストクラスおわり===
@@ -170,10 +252,11 @@ class lists {
 //
 
 add?.addEventListener("click", () => {
-    let selectlist: HTMLDivElement = daylist;
+    let selectlist: HTMLDivElement = generallist;
     day.checked ? selectlist = daylist : {};
     week.checked ? selectlist = weeklist : {};
     month.checked ? selectlist = monthlist : {};
+    general.checked ? selectlist = generallist : {};
     listArray[listArray.length] = new lists(selectlist, inp.value, false);
     listArray[listArray.length - 1].show();
     inp.value = "";
@@ -186,13 +269,11 @@ add?.addEventListener("click", () => {
 
 window.onload = () => {
     //console.log("onload")
-    listArray = dataLoad();
-    lists.show();
-    checkDWM();
+    idataLoad();
 }
 
 window.addEventListener("beforeunload", () => {
-    dataSet();
+    idataSet();
 })
 
 //
