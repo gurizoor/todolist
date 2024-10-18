@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily routine management tool</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
@@ -47,9 +48,23 @@
             <!--month-->
         </div>
     </div>
-    <a>ver1.2.1</a>
+    <a>ver1.3.0</a>
     <!--<button type="button" id="devb">dev</button>-->
     <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('serviceworker.js')
+            .then(function(registration) {
+                console.log('Service Worker が登録されました:', registration.scope);
+            })
+            .catch(function(error) {
+                console.log('Service Worker の登録に失敗しました:', error);
+            });
+    });
+}
+
+        </script>
 </body>
 
 </html>

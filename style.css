@@ -16,7 +16,7 @@ label {
     background-color: rgb(240, 240, 240);
     border-radius: 10px;
     border: 1px solid;
-    margin: 3px;
+    margin: 0.3%;
 }
 
 #inp {
@@ -24,7 +24,7 @@ label {
     font-size: 25px;
     border-radius: 10px;
     border: none;
-    margin: 5px;
+    margin: 0.8%;
 }
 
 #add {
