@@ -152,7 +152,7 @@ class lists {
         this.b.addEventListener("click", () => {
             this.remove();
         });
-        this.i.addEventListener("click", () => {
+        this.i.addEventListener("change", () => {
             idataSet();
         });
     }

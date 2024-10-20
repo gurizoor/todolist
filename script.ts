@@ -204,7 +204,7 @@ class lists {
             this.remove();
         })
 
-        this.i.addEventListener("click",()=>{
+        this.i.addEventListener("change",()=>{
             idataSet();
         })
     }
