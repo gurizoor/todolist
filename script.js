@@ -37,8 +37,9 @@ function checkDWM() {
                 list.i.checked = false;
         });
     }
-    if (((preDate.day === 6) !== (todayObj.day === 0)) ||
-        (preDate.day === 0 && todayObj.day === 1) ||
+    if (preDate.day === 6 && todayObj.day === 0) {
+    }
+    else if ((preDate.day === 0 && todayObj.day === 1) ||
         (todayObj.day < preDate.day) ||
         (todayObj.date >= preDate.date + 7) ||
         (todayObj.month !== preDate.month) ||
@@ -150,6 +151,9 @@ class lists {
         lsid += 1;
         this.b.addEventListener("click", () => {
             this.remove();
+        });
+        this.i.addEventListener("click", () => {
+            idataSet();
         });
     }
     show() {

@@ -38,8 +38,8 @@ function checkDWM() {
         });
     }
     //月曜を跨いだらチェックを外す
-    if (
-        ((preDate.day === 6) !== (todayObj.day === 0)) ||
+    if(preDate.day===6&&todayObj.day===0){
+    }else if (
         (preDate.day === 0 && todayObj.day === 1) ||
         (todayObj.day < preDate.day) ||
         (todayObj.date >= preDate.date + 7) ||
@@ -202,6 +202,10 @@ class lists {
 
         this.b.addEventListener("click", () => {
             this.remove();
+        })
+
+        this.i.addEventListener("click",()=>{
+            idataSet();
         })
     }
 
