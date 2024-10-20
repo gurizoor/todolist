@@ -37,7 +37,8 @@ function checkDWM() {
                 list.i.checked = false;
         });
     }
-    if ((preDate.day === 0 && todayObj.day === 1) ||
+    if (((preDate.day === 6) !== (todayObj.day === 0)) ||
+        (preDate.day === 0 && todayObj.day === 1) ||
         (todayObj.day < preDate.day) ||
         (todayObj.date >= preDate.date + 7) ||
         (todayObj.month !== preDate.month) ||
@@ -72,7 +73,7 @@ function openDatabase() {
             resolve(db);
         };
         request.onerror = (event) => {
-            console.error("IndexedDBのオープンエラー", event);
+            alert("IndexedDBのオープンエラー" + event);
             reject(event);
         };
     });
@@ -91,7 +92,7 @@ function idataSet() {
         request.onsuccess = () => {
         };
         request.onerror = (e) => {
-            console.error("データ保存に失敗しました", e);
+            alert("データ保存に失敗しました" + e);
         };
     });
 }
@@ -110,12 +111,20 @@ function idataLoad() {
                 checkDWM();
             }
             else {
-                console.log("IndexedDBに保存されたデータがありません");
+                console.log("Indexeddbに保存されたデータがありません");
             }
         };
         request.onerror = (e) => {
-            console.error("データ読み込みに失敗しました", e);
+            alert("データ読み込みに失敗しました" + e);
         };
+    });
+}
+if (!('indexedDB' in window)) {
+    alert('お使いのブラウザではIndexedDBがサポートされていません。別のブラウザをご利用ください。');
+}
+else {
+    openDatabase().catch((error) => {
+        alert("IndexedDBの初期化に失敗しました:" + error);
     });
 }
 class lists {
@@ -156,6 +165,7 @@ class lists {
         this.l.remove();
         this.b.remove();
         listArray = listArray.filter(list => list !== this);
+        idataSet();
     }
     static show() {
         for (let i = 0; i < listArray.length; i++) {
@@ -184,14 +194,16 @@ add === null || add === void 0 ? void 0 : add.addEventListener("click", () => {
     general.checked ? selectlist = generallist : {};
     listArray[listArray.length] = new lists(selectlist, inp.value, false);
     listArray[listArray.length - 1].show();
+    idataSet();
     inp.value = "";
 });
 window.onload = () => {
     idataLoad();
 };
-window.addEventListener("beforeunload", () => {
+setInterval(() => {
     idataSet();
-});
+    checkDWM();
+}, 60000);
 const devb = document.getElementById("devb");
 devb === null || devb === void 0 ? void 0 : devb.addEventListener("click", () => {
 });

@@ -39,6 +39,7 @@ function checkDWM() {
     }
     //月曜を跨いだらチェックを外す
     if (
+        ((preDate.day === 6) !== (todayObj.day === 0)) ||
         (preDate.day === 0 && todayObj.day === 1) ||
         (todayObj.day < preDate.day) ||
         (todayObj.date >= preDate.date + 7) ||
@@ -86,7 +87,7 @@ function openDatabase(): Promise<IDBDatabase> {
         };
 
         request.onerror = (event) => {
-            console.error("IndexedDBのオープンエラー", event);
+            alert("IndexedDBのオープンエラー"+event);
             reject(event);
         };
     });
@@ -112,10 +113,9 @@ async function idataSet(): Promise<void> {
     };
 
     request.onerror = (e) => {
-        console.error("データ保存に失敗しました", e);
+        alert("データ保存に失敗しました"+e);
     };
 }
-
 
 async function idataLoad(): Promise<void> {
     const db = await openDatabase();
@@ -136,14 +136,26 @@ async function idataLoad(): Promise<void> {
             lists.show();
             checkDWM();
         } else {
-            console.log("IndexedDBに保存されたデータがありません");
+            console.log("Indexeddbに保存されたデータがありません");
+            // alert("IndexedDBに保存されたデータがありません");
         }
     };
 
     request.onerror = (e) => {
-        console.error("データ読み込みに失敗しました", e);
+        alert("データ読み込みに失敗しました"+e);
     };
 }
+
+// IndexedDBがサポートされているかチェック
+if (!('indexedDB' in window)) {
+    alert('お使いのブラウザではIndexedDBがサポートされていません。別のブラウザをご利用ください。');
+} else {
+    // IndexedDBのコード実行
+    openDatabase().catch((error) => {
+        alert("IndexedDBの初期化に失敗しました:" + error);
+    });
+}
+
 
 
 //
@@ -209,6 +221,7 @@ class lists {
         this.b.remove();
 
         listArray = listArray.filter(list => list !== this);
+        idataSet();
     }
 
     public static show() {
@@ -240,7 +253,7 @@ class lists {
         listArray = listobj.map(list => {
             let listelement = document.getElementById(list.dwmId) as HTMLDivElement;
             return new lists(listelement, list.l, list.i);
-        }).filter((item: any):item is lists => item !== null);
+        }).filter((item: any): item is lists => item !== null);
     }
 }
 //
@@ -259,6 +272,7 @@ add?.addEventListener("click", () => {
     general.checked ? selectlist = generallist : {};
     listArray[listArray.length] = new lists(selectlist, inp.value, false);
     listArray[listArray.length - 1].show();
+    idataSet();
     inp.value = "";
     //console.log("click")
 })
@@ -269,12 +283,18 @@ add?.addEventListener("click", () => {
 
 window.onload = () => {
     //console.log("onload")
+    //alert("onload");
     idataLoad();
 }
 
-window.addEventListener("beforeunload", () => {
+// 
+// ===定期的な処理===
+// 
+
+setInterval(() => {
     idataSet();
-})
+    checkDWM();
+}, 60000);
 
 //
 //development
@@ -282,6 +302,7 @@ window.addEventListener("beforeunload", () => {
 const devb = document.getElementById("devb");
 devb?.addEventListener("click", () => {
 
+    // alert("dev button was clicked");
     // console.log(preDate);
     // console.log("日にち: " + new Date().getDate());
     // console.log("曜日" + new Date().getDay());
