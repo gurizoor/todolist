@@ -9,6 +9,8 @@ let day = <HTMLInputElement>document.getElementById("day");
 let week = <HTMLInputElement>document.getElementById("week");
 let month = <HTMLInputElement>document.getElementById("month");
 let general = <HTMLInputElement>document.getElementById("general");
+let undo = <HTMLButtonElement>document.getElementById("undo");
+let redo = <HTMLButtonElement>document.getElementById("redo");
 
 let lsid: number = 0;
 let listArray: lists[] = [];
@@ -38,8 +40,8 @@ function checkDWM() {
         });
     }
     //月曜を跨いだらチェックを外す
-    if(preDate.day===6&&todayObj.day===0){
-    }else if (
+    if (preDate.day === 6 && todayObj.day === 0) {
+    } else if (
         (preDate.day === 0 && todayObj.day === 1) ||
         (todayObj.day < preDate.day) ||
         (todayObj.date >= preDate.date + 7) ||
@@ -87,7 +89,7 @@ function openDatabase(): Promise<IDBDatabase> {
         };
 
         request.onerror = (event) => {
-            alert("IndexedDBのオープンエラー"+event);
+            alert("IndexedDBのオープンエラー" + event);
             reject(event);
         };
     });
@@ -113,7 +115,7 @@ async function idataSet(): Promise<void> {
     };
 
     request.onerror = (e) => {
-        alert("データ保存に失敗しました"+e);
+        alert("データ保存に失敗しました" + e);
     };
 }
 
@@ -142,7 +144,7 @@ async function idataLoad(): Promise<void> {
     };
 
     request.onerror = (e) => {
-        alert("データ読み込みに失敗しました"+e);
+        alert("データ読み込みに失敗しました" + e);
     };
 }
 
@@ -169,8 +171,8 @@ class lists {
     private b: HTMLButtonElement;
     private dwm: HTMLDivElement;
 
-
-    private num: number;
+    public AorR: boolean;
+    public num: number;
     public dwmId: string;
 
     constructor(list: HTMLDivElement, showtext: string, prechecked: boolean) {
@@ -182,6 +184,7 @@ class lists {
         this.num = lsid;
         this.dwm = list;
         this.dwmId = list.id;
+        this.AorR = false;
 
         this.i.type = "checkbox";
         this.i.id = "ch" + this.num;
@@ -201,10 +204,12 @@ class lists {
         lsid += 1;
 
         this.b.addEventListener("click", () => {
+            this.AorR = false;
+            udrd.addLog(this);
             this.remove();
         })
 
-        this.i.addEventListener("change",()=>{
+        this.i.addEventListener("change", () => {
             idataSet();
         })
     }
@@ -274,12 +279,89 @@ add?.addEventListener("click", () => {
     week.checked ? selectlist = weeklist : {};
     month.checked ? selectlist = monthlist : {};
     general.checked ? selectlist = generallist : {};
-    listArray[listArray.length] = new lists(selectlist, inp.value, false);
+    let element = new lists(selectlist, inp.value, false);
+    element.AorR = true;
+    listArray[listArray.length] = element;
     listArray[listArray.length - 1].show();
     idataSet();
     inp.value = "";
+    udrd.addLog(listArray[listArray.length-1]);
+    udrd.resetRedoArr();
     //console.log("click")
 })
+
+// 
+// ===undo redoの処理===
+// 
+
+class udrd {
+    public static undoArr: lists[] = [];
+    private static redoArr: lists[] = [];
+
+    // redoのリセット
+    public static resetRedoArr() {
+        this.redoArr = [];
+    }
+
+    // ===UNDO===
+    public static addLog(element: lists): void {
+        this.undoArr.push(element);
+        this.resetRedoArr();
+    }
+
+    public static getLog(): void {
+        const ldata: lists | undefined = this.undoArr.pop();
+
+        if (ldata) {
+            // `AorR`が`true`なら削除、`false`なら生成
+            if (ldata.AorR) {
+                ldata.remove();
+                ldata.AorR = false;
+            } else {
+                listArray.push(ldata);
+                listArray[listArray.length - 1].show();
+                ldata.AorR = true;
+            }
+            this.addRLog(ldata);
+            idataSet();
+        } else {
+            console.log("無効なリスト要素です");
+        }
+    }
+
+    // ===REDO===
+    public static addRLog(element: lists): void {
+        this.redoArr.push(element);
+    }
+
+    public static getRLog(): void {
+        const ldata: lists | undefined = this.redoArr.pop();
+
+        if (ldata) {
+            // `AorR`が`true`なら削除、`false`なら生成
+            if (ldata.AorR) {
+                ldata.remove();
+                ldata.AorR = false;
+            } else {
+                listArray.push(ldata);
+                listArray[listArray.length - 1].show();
+                ldata.AorR = true;
+            }
+            this.addLog(ldata);
+            idataSet();
+        } else {
+            console.log("無効なリスト要素です");
+        }
+    }
+}
+
+undo.addEventListener("click", () => {
+    udrd.getLog();
+});
+
+redo.addEventListener("click", () => {
+    udrd.getRLog();
+});
 
 //
 //===起動・終了時の処理===
@@ -297,6 +379,12 @@ window.onload = () => {
 
 setInterval(() => {
     idataSet();
+    todayObj = {
+        date: today.getDate(),
+        day: today.getDay(),
+        month: today.getMonth(),
+        year: today.getFullYear()
+    }
     checkDWM();
 }, 60000);
 
@@ -306,6 +394,7 @@ setInterval(() => {
 const devb = document.getElementById("devb");
 devb?.addEventListener("click", () => {
 
+    // console.log(udrd.undoArr);
     // alert("dev button was clicked");
     // console.log(preDate);
     // console.log("日にち: " + new Date().getDate());

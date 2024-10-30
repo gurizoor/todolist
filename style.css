@@ -17,6 +17,10 @@ label {
     border-radius: 10px;
     border: 1px solid;
     margin: 0.3%;
+    font-family: "Oswald", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
 }
 
 #inp {
@@ -24,7 +28,7 @@ label {
     font-size: 25px;
     border-radius: 10px;
     border: none;
-    margin: 0.8%;
+    margin: 0.5%;
 }
 
 #add {
@@ -86,4 +90,27 @@ label {
 .tlist {
     display: block;
     font-size: 200%;
+}
+
+.urb {
+    margin: 0.4%;
+}
+
+#undo,
+#redo {
+    border: 1px solid black;
+    border-radius: 30%;
+    background-color: rgb(255, 255, 255);
+    width: 4%;
+    font-size: 150%;
+}
+
+#undo:hover,
+#redo:hover {
+    background-color: rgb(200, 200, 200);
+}
+
+#undo:active,
+#redo:active {
+    background-color: rgb(170, 170, 170);
 }

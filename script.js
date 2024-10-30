@@ -18,6 +18,8 @@ let day = document.getElementById("day");
 let week = document.getElementById("week");
 let month = document.getElementById("month");
 let general = document.getElementById("general");
+let undo = document.getElementById("undo");
+let redo = document.getElementById("redo");
 let lsid = 0;
 let listArray = [];
 let today = new Date();
@@ -137,6 +139,7 @@ class lists {
         this.num = lsid;
         this.dwm = list;
         this.dwmId = list.id;
+        this.AorR = false;
         this.i.type = "checkbox";
         this.i.id = "ch" + this.num;
         this.i.checked = prechecked;
@@ -150,6 +153,8 @@ class lists {
         this.b.className = "blist";
         lsid += 1;
         this.b.addEventListener("click", () => {
+            this.AorR = false;
+            udrd.addLog(this);
             this.remove();
         });
         this.i.addEventListener("change", () => {
@@ -196,16 +201,84 @@ add === null || add === void 0 ? void 0 : add.addEventListener("click", () => {
     week.checked ? selectlist = weeklist : {};
     month.checked ? selectlist = monthlist : {};
     general.checked ? selectlist = generallist : {};
-    listArray[listArray.length] = new lists(selectlist, inp.value, false);
+    let element = new lists(selectlist, inp.value, false);
+    element.AorR = true;
+    listArray[listArray.length] = element;
     listArray[listArray.length - 1].show();
     idataSet();
     inp.value = "";
+    udrd.addLog(listArray[listArray.length - 1]);
+    udrd.resetRedoArr();
+});
+class udrd {
+    static resetRedoArr() {
+        this.redoArr = [];
+    }
+    static addLog(element) {
+        this.undoArr.push(element);
+        this.resetRedoArr();
+    }
+    static getLog() {
+        const ldata = this.undoArr.pop();
+        if (ldata) {
+            if (ldata.AorR) {
+                ldata.remove();
+                ldata.AorR = false;
+            }
+            else {
+                listArray.push(ldata);
+                listArray[listArray.length - 1].show();
+                ldata.AorR = true;
+            }
+            this.addRLog(ldata);
+            idataSet();
+        }
+        else {
+            console.log("無効なリスト要素です");
+        }
+    }
+    static addRLog(element) {
+        this.redoArr.push(element);
+    }
+    static getRLog() {
+        const ldata = this.redoArr.pop();
+        if (ldata) {
+            if (ldata.AorR) {
+                ldata.remove();
+                ldata.AorR = false;
+            }
+            else {
+                listArray.push(ldata);
+                listArray[listArray.length - 1].show();
+                ldata.AorR = true;
+            }
+            this.addLog(ldata);
+            idataSet();
+        }
+        else {
+            console.log("無効なリスト要素です");
+        }
+    }
+}
+udrd.undoArr = [];
+udrd.redoArr = [];
+undo.addEventListener("click", () => {
+    udrd.getLog();
+});
+redo.addEventListener("click", () => {
+    udrd.getRLog();
 });
 window.onload = () => {
     idataLoad();
 };
 setInterval(() => {
     idataSet();
+    todayObj = {
+        date: today.getDate(),
+        day: today.getDay(),
+        month: today.getMonth(),
+        year: today.getFullYear()
+    };
     checkDWM();
 }, 60000);
 const devb = document.getElementById("devb");
