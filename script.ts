@@ -45,7 +45,7 @@ function checkDWM() {
         (preDate.day === 0 && todayObj.day === 1) ||
         (todayObj.day < preDate.day) ||
         (todayObj.date >= preDate.date + 7) ||
-        (todayObj.month !== preDate.month) ||
+        ((todayObj.month !== preDate.month) && (preDate.day <= 24)) ||
         (todayObj.year !== preDate.year)
     ) {
         listArray.map(list => {
@@ -285,7 +285,7 @@ add?.addEventListener("click", () => {
     listArray[listArray.length - 1].show();
     idataSet();
     inp.value = "";
-    udrd.addLog(listArray[listArray.length-1]);
+    udrd.addLog(listArray[listArray.length - 1]);
     udrd.resetRedoArr();
     //console.log("click")
 })
@@ -377,16 +377,16 @@ window.onload = () => {
 // ===定期的な処理===
 // 
 
-setInterval(() => {
-    idataSet();
-    todayObj = {
-        date: today.getDate(),
-        day: today.getDay(),
-        month: today.getMonth(),
-        year: today.getFullYear()
-    }
-    checkDWM();
-}, 60000);
+// setInterval(() => {
+//     idataSet();
+//     todayObj = {
+//         date: today.getDate(),
+//         day: today.getDay(),
+//         month: today.getMonth(),
+//         year: today.getFullYear()
+//     }
+//     checkDWM();
+// }, 60000);
 
 //
 //development

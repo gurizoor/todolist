@@ -44,7 +44,7 @@ function checkDWM() {
     else if ((preDate.day === 0 && todayObj.day === 1) ||
         (todayObj.day < preDate.day) ||
         (todayObj.date >= preDate.date + 7) ||
-        (todayObj.month !== preDate.month) ||
+        ((todayObj.month !== preDate.month) && (preDate.day <= 24)) ||
         (todayObj.year !== preDate.year)) {
         listArray.map(list => {
             if (list.dwmId == "weeklist")
@@ -271,16 +271,6 @@ redo.addEventListener("click", () => {
 window.onload = () => {
     idataLoad();
 };
-setInterval(() => {
-    idataSet();
-    todayObj = {
-        date: today.getDate(),
-        day: today.getDay(),
-        month: today.getMonth(),
-        year: today.getFullYear()
-    };
-    checkDWM();
-}, 60000);
 const devb = document.getElementById("devb");
 devb === null || devb === void 0 ? void 0 : devb.addEventListener("click", () => {
 });
