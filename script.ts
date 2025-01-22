@@ -45,7 +45,7 @@ function checkDWM() {
         (preDate.day === 0 && todayObj.day === 1) ||
         (todayObj.day < preDate.day) ||
         (todayObj.date >= preDate.date + 7) ||
-        ((todayObj.month !== preDate.month) && (preDate.day <= 24)) ||
+        // ((todayObj.month !== preDate.month) && (preDate.day <= 24)) ||
         (todayObj.year !== preDate.year)
     ) {
         listArray.map(list => {
@@ -171,7 +171,7 @@ class lists {
     private b: HTMLButtonElement;
     private dwm: HTMLDivElement;
 
-    public AorR: boolean;
+    public AorR: boolean; // added or removed
     public num: number;
     public dwmId: string;
 

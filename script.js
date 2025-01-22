@@ -44,7 +44,6 @@ function checkDWM() {
     else if ((preDate.day === 0 && todayObj.day === 1) ||
         (todayObj.day < preDate.day) ||
         (todayObj.date >= preDate.date + 7) ||
-        ((todayObj.month !== preDate.month) && (preDate.day <= 24)) ||
         (todayObj.year !== preDate.year)) {
         listArray.map(list => {
             if (list.dwmId == "weeklist")
